@@ -1,6 +1,7 @@
 <html>
 <head>
     <title>My Day - To Do List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
@@ -13,7 +14,7 @@
         .form {
             position: relative;
             background: #FFFFFF;
-            padding: 20px;
+            padding: 10px 20px 20px 20px;
             text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
         }
@@ -40,9 +41,20 @@
             cursor: pointer;
         }
 
-        .inputDelete {
+        .inputComplete {
             font-family: "Roboto", sans-serif;
             background: #89afe5;
+            border: 0;
+            color: #FFFFFF;
+            font-size: 14px;
+            -webkit-transition: all 0.3 ease;
+            transition: all 0.3 ease;
+            cursor: pointer;
+        }
+
+        .inputDelete {
+            font-family: "Roboto", sans-serif;
+            background: #c45858;
             border: 0;
             color: #FFFFFF;
             font-size: 14px;
@@ -116,10 +128,18 @@
             left: 70px;
             transform: translate(-50%, -50%);
         }
+
         .datetime-now {
             position: absolute;
             top: 90%;
-            left: 100px;
+            left: 127px;
+            transform: translate(-50%, -50%);
+        }
+
+        .tasks-completed {
+            position: absolute;
+            top: 90%;
+            right: 10px;
             transform: translate(-50%, -50%);
         }
 
@@ -138,13 +158,17 @@
         </div>
         <div class="datetime-now">
             <h3>
-                {% now "jS F Y H:i" %}
+                {% now "l jS F, Y" %}
             </h3>
+        </div>
+        <div class="tasks-completed">
+            <p>
+                Done: {{ completed_items|length }}/{{ all_items|length }}
+            </p>
         </div>
     </div>
     <div class="form">
-
-
+        <h3>What do you want to do today?</h3>
         <form action="/addTodo/" style="display: inline;" method="post">{% csrf_token %}
             <input type="text" class="inputText" placeholder="Buy milk..." name="content">
             <input type="submit" class="inputSubmit" value="+">
@@ -152,19 +176,41 @@
         <hr>
         <ul>
             {% for list_item in all_items %}
-                <li>
-                    <form action="/deleteTodo/{{ list_item.id }}/" style="display: inline;"
-                          method="post">{% csrf_token %}
-                        <input class="inputDelete" type="submit" value="&#10004">
-                    </form>
-                    {{ list_item.content }}
+                {% if list_item.is_done == True %}
+                    <li style="background: #888; color: #fff; text-decoration: line-through;">
+                        <form action="/completeTodo/{{ list_item.id }}/" style="display: inline;"
+                              method="post">{% csrf_token %}
+                            <input class="inputComplete" style="background: #5ddc63;" type="submit" value="&#10004">
 
-                </li>
+                        </form>
+                        {{ list_item.content }}
+                        <span style="float:right">
+                            <form action="/deleteTodo/{{ list_item.id }}/" style="display: inline;"
+                                  method="post">{% csrf_token %}
+                                <button class="inputDelete" type="submit"><i class='fa fa-trash'></i></button>
+                            </form>
+                        </span>
+                    </li>
+                {% else %}
+                    <li>
+                        <form action="/completeTodo/{{ list_item.id }}/" style="display: inline;"
+                              method="post">{% csrf_token %}
+                            <input class="inputComplete" type="submit" value="&#10004">
+                        </form>
+                        {{ list_item.content }}
+                        <span style="float:right">
+                            <form action="/deleteTodo/{{ list_item.id }}/" style="display: inline;"
+                                  method="post">{% csrf_token %}
+                                <button class="inputDelete" type="submit"><i class='fa fa-trash'></i></button>
+                            </form>
+                        </span>
+                    </li>
+                {% endif %}
+
             {% endfor %}
         </ul>
     </div>
 </div>
-
 </body>
 </html>
 
