@@ -1,20 +1,171 @@
-<div>
-    <h2>My to-do list</h2>
+<html>
+<head>
+    <title>My Day - To Do List</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
+        .login-page {
+            width: 40%;
+            padding: 3%;
+            margin: auto;
+        }
+
+        .form {
+            position: relative;
+            background: #FFFFFF;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        }
+
+        .inputText {
+            font-family: "Roboto", sans-serif;
+            outline: 0;
+            background: #f2f2f2;
+            width: 90%;
+            border: 0;
+            margin: 0 0 15px;
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        .inputSubmit {
+            font-family: "Roboto", sans-serif;
+            background: #89afe5;
+            border: 0;
+            color: #FFFFFF;
+            font-size: 14px;
+            -webkit-transition: all 0.3 ease;
+            transition: all 0.3 ease;
+            cursor: pointer;
+        }
+
+        .inputDelete {
+            font-family: "Roboto", sans-serif;
+            background: #89afe5;
+            border: 0;
+            color: #FFFFFF;
+            font-size: 14px;
+            -webkit-transition: all 0.3 ease;
+            transition: all 0.3 ease;
+            cursor: pointer;
+        }
+
+        .inputSubmit:hover {
+            background: #6fc2bf;
+        }
+
+        body {
+            background: #d4e2ef; /* fallback for old browsers */
+            background: -webkit-linear-gradient(right, #d4e2ef, #89afe5);
+            background: -moz-linear-gradient(right, #d4e2ef, #89afe5);
+            background: -o-linear-gradient(right, #d4e2ef, #89afe5);
+            background: linear-gradient(to left, #d4e2ef, #89afe5);
+            font-family: "Roboto", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        ul {
+            text-align: left;
+            position: relative;
+            padding: 0px;
+            list-style-type: none;
+            font-size: 18px;
+            transition: 0.2s;
+
+            /* make the list items unselectable */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        li {
+            text-align: left;
+            position: relative;
+            padding: 8px 8px 8px 8px;
+            list-style-type: none;
+            background: #eee;
+            font-size: 18px;
+            transition: 0.2s;
+
+            /* make the list items unselectable */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Set all odd list items to a different color (zebra-stripes) */
+        li:nth-child(odd) {
+            background: #f9f9f9;
+        }
+
+        .container {
+            padding: 0px;
+            position: relative;
+            text-align: left;
+            color: white;
+        }
+
+
+        .my-day {
+            position: absolute;
+            top: 50%;
+            left: 70px;
+            transform: translate(-50%, -50%);
+        }
+        .datetime-now {
+            position: absolute;
+            top: 90%;
+            left: 100px;
+            transform: translate(-50%, -50%);
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div class="login-page">
+    <div class="container">
+        <img src="https://i.imgur.com/xIyZw5z.png" style="width:100%;">
+
+        <div class="my-day">
+            <h1>My day</h1>
+
+        </div>
+        <div class="datetime-now">
+            <h3>
+                {% now "jS F Y H:i" %}
+            </h3>
+        </div>
+    </div>
+    <div class="form">
+
+
+        <form action="/addTodo/" style="display: inline;" method="post">{% csrf_token %}
+            <input type="text" class="inputText" placeholder="Buy milk..." name="content">
+            <input type="submit" class="inputSubmit" value="+">
+        </form>
+        <hr>
+        <ul>
+            {% for list_item in all_items %}
+                <li>
+                    <form action="/deleteTodo/{{ list_item.id }}/" style="display: inline;"
+                          method="post">{% csrf_token %}
+                        <input class="inputDelete" type="submit" value="&#10004">
+                    </form>
+                    {{ list_item.content }}
+
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
-<ul>
-    {% for list_item in all_items %}
-        <li>
-            {{ list_item.content }}
-        <form action="/deleteTodo/{{ list_item.id }}/" style="display: inline;" method="post">{% csrf_token %}
-                <input type="submit" value="X">
-            </form>
-        </li>
-    {% endfor %}
-</ul>
+</body>
+</html>
 
-<form action="/addTodo/" method="post">{% csrf_token %}
-    <input type="text" name="content">
-    <input type="submit" value="Add">
-</form>
+
