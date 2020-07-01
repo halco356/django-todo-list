@@ -8,3 +8,8 @@
         <li>{{ list_item.content }}</li>
     {% endfor %}
 </ul>
+
+<form action="/addTodo/" method="post">{% csrf_token %}
+    <input type="text" name="content">
+    <input type="submit" value="Add">
+</form>
